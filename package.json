@@ -1,0 +1,44 @@
+{
+  "name": "word-wolf-online",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/credential-provider-node": "^3.682.0",
+    "@aws-sdk/types": "^3.679.0",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@langchain/community": "^0.3.11",
+    "@langchain/core": "^0.3.16",
+    "@mui/icons-material": "^6.1.5",
+    "@mui/lab": "^6.0.0-beta.13",
+    "@mui/material": "^6.1.5",
+    "@smithy/eventstream-codec": "^3.1.7",
+    "@smithy/protocol-http": "^4.1.5",
+    "@smithy/signature-v4": "^4.2.1",
+    "@smithy/util-utf8": "^3.0.0",
+    "@supabase/supabase-js": "^2.45.6",
+    "http-status-codes": "^2.3.0",
+    "langchain": "^0.3.5",
+    "next": "15.0.1",
+    "random-words": "^2.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ts-dedent": "^2.2.0"
+  },
+  "devDependencies": {
+    "@smithy/types": "^3.2.0",
+    "@types/node": "^20.17.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "postcss": "^8.4.47",
+    "supabase": "^1.207.9",
+    "typescript": "^5.6.3"
+  }
+}
