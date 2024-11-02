@@ -85,12 +85,6 @@ export default function WaitingSetup({
           <Box alignSelf={"center"} marginTop={2}>
             <GameSetupForm roomId={roomId} disabled={players.length < 3} />
           </Box>
-          <Typography variant="caption" textAlign={"center"} marginTop={1}>
-            プレイヤーが集まったら設定を行ってください
-          </Typography>
-          <Typography variant="caption" textAlign={"center"}>
-            ※最低3人以上のプレイヤーが必要です
-          </Typography>
         </>
       )}
       {!isHost && (

@@ -46,7 +46,11 @@ export default async function callModel(category: string, roomId: string) {
   const structuredLlm = model.withStructuredOutput(topics);
   const chain = prompt.pipe(structuredLlm);
 
-  const response = await chain.invoke({ category });
+  const response = await chain.invoke({ category }).catch((e) => {
+    console.error(e);
+    return null;
+  });
+  if (!response) return null;
   await saveHistory(response, roomId);
 
   return response;

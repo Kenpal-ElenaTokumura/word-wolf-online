@@ -3,7 +3,7 @@
 import { ROOT_URL } from "@/utils/common";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import { LoadingButton } from "@mui/lab";
-import { Box, Slider, Stack, TextField } from "@mui/material";
+import { Box, Slider, Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useState } from "react";
 
 interface GameSetupProps {
@@ -33,6 +33,7 @@ export default function GameSetupForm({
   ];
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
   const [category, setCategory] = useState<string>(
     placeholderCategory[Math.floor(Math.random() * placeholderCategory.length)]
   );
@@ -52,6 +53,11 @@ export default function GameSetupForm({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ category, playTimeMins }),
+    }).then((res) => {
+      if (!res.ok) {
+        setIsError(true);
+        setIsLoading(false);
+      }
     });
   }
 
@@ -61,7 +67,10 @@ export default function GameSetupForm({
         <TextField
           label="カテゴリ"
           value={category}
-          onChange={(event) => setCategory(event.target.value)}
+          onChange={(event) => {
+            setCategory(event.target.value);
+            setIsError(false);
+          }}
           variant="outlined"
           required
         />
@@ -92,6 +101,24 @@ export default function GameSetupForm({
             ゲームを設定
           </LoadingButton>
         </Box>
+      </Stack>
+      {isError && (
+        <Stack>
+          <Typography variant="subtitle2" textAlign={"center"} color="error">
+            エラーが発生しました
+          </Typography>
+          <Typography variant="subtitle2" textAlign={"center"} color="error">
+            カテゴリを見直して再度お試しください
+          </Typography>
+        </Stack>
+      )}
+      <Stack>
+        <Typography variant="caption" textAlign={"center"} marginTop={1}>
+          プレイヤーが集まったら設定を行ってください
+        </Typography>
+        <Typography variant="caption" textAlign={"center"}>
+          ※最低3人以上のプレイヤーが必要です
+        </Typography>
       </Stack>
     </form>
   );

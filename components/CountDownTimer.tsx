@@ -40,7 +40,7 @@ export default function CountDownTimer({
         {countTime > 0 &&
           `${String(Math.floor(countTime / 60)).padStart(2, "0")}:${String(
             countTime % 60
-          ).padStart(2, "0")}`}{" "}
+          ).padStart(2, "0")}`}
         {countTime <= 0 && "Time's up!"}
       </Typography>
       {countTime <= 0 && (

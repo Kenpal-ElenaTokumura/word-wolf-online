@@ -47,15 +47,20 @@ export async function PATCH(
   }
 
   const topics = await callModel(category, roomId);
+  if (!topics) {
+    return NextResponse.json(
+      { error: "Failed to get topics" },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR }
+    );
+  }
   const wolf = await decideWolf(roomId);
-  const gameSec = playTimeMins * 60;
-
   if (!wolf) {
     return NextResponse.json(
       { error: "Failed to decide wolf" },
       { status: StatusCodes.INTERNAL_SERVER_ERROR }
     );
   }
+  const gameSec = playTimeMins * 60;
 
   // update room
   const roomResult = await supabase
