@@ -57,18 +57,6 @@ export async function PATCH(
     );
   }
 
-  // update players
-  const wolfResult = await supabase
-    .from("players")
-    .update({ is_wolf: true })
-    .eq("id", wolf.id);
-  if (wolfResult.error) {
-    console.error(wolfResult.error);
-    return NextResponse.json(
-      { error: "Failed to update player" },
-      { status: StatusCodes.INTERNAL_SERVER_ERROR }
-    );
-  }
   // update room
   const roomResult = await supabase
     .from("rooms")
@@ -83,6 +71,19 @@ export async function PATCH(
     console.error(roomResult.error);
     return NextResponse.json(
       { error: "Failed to update room" },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR }
+    );
+  }
+
+  // update players
+  const wolfResult = await supabase
+    .from("players")
+    .update({ is_wolf: true })
+    .eq("id", wolf.id);
+  if (wolfResult.error) {
+    console.error(wolfResult.error);
+    return NextResponse.json(
+      { error: "Failed to update player" },
       { status: StatusCodes.INTERNAL_SERVER_ERROR }
     );
   }

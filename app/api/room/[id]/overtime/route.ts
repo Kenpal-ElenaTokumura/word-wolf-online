@@ -26,6 +26,17 @@ export async function PATCH(
   const endAt = Date.now() + 60 * 1000;
   const endAtString = new Date(endAt).toISOString();
 
+  const playersResult = await supabase
+    .from("players")
+    .update({ is_voted: false, voted_count: 0 })
+    .eq("room_id", roomId);
+  if (playersResult.error) {
+    return NextResponse.json(
+      { error: "Failed to update players" },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR }
+    );
+  }
+
   const roomResult = await supabase
     .from("rooms")
     .update({
@@ -37,16 +48,6 @@ export async function PATCH(
   if (roomResult.error) {
     return NextResponse.json(
       { error: "Failed to update room status" },
-      { status: StatusCodes.INTERNAL_SERVER_ERROR }
-    );
-  }
-  const playersResult = await supabase
-    .from("players")
-    .update({ is_voted: false, voted_count: 0 })
-    .eq("room_id", roomId);
-  if (playersResult.error) {
-    return NextResponse.json(
-      { error: "Failed to update players" },
       { status: StatusCodes.INTERNAL_SERVER_ERROR }
     );
   }

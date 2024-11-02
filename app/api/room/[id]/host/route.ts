@@ -23,17 +23,6 @@ export async function PATCH(
     );
   }
 
-  const { data: room, error: roomError } = await supabase
-    .from("rooms")
-    .update({ host_id: hostId })
-    .match({ id: roomId })
-    .single();
-  if (roomError) {
-    return NextResponse.json(roomError, {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-    });
-  }
-
   const { data: player, error: playerError } = await supabase
     .from("players")
     .update({ room_id: roomId })
@@ -41,6 +30,17 @@ export async function PATCH(
     .single();
   if (playerError) {
     return NextResponse.json(playerError, {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+    });
+  }
+
+  const { data: room, error: roomError } = await supabase
+    .from("rooms")
+    .update({ host_id: hostId })
+    .match({ id: roomId })
+    .single();
+  if (roomError) {
+    return NextResponse.json(roomError, {
       status: StatusCodes.INTERNAL_SERVER_ERROR,
     });
   }
