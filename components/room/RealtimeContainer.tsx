@@ -120,6 +120,7 @@ export default function RealtimeContainer({
       .from("players")
       .select()
       .eq("room_id", roomId)
+      .order("created_at", { ascending: true })
       .then(({ data }) => {
         if (data) {
           setRealtimePlayers(data);
