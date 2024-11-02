@@ -64,10 +64,11 @@ export default async function Page({
       >
         <Grid>
           <RealtimeContainer
+            roomId={roomId}
             playerId={playerId}
             isHost={isHost}
-            room={room.data}
-            players={players.data}
+            initialRoom={room.data}
+            initialPlayers={players.data}
           />
           {isHost && (
             <Box

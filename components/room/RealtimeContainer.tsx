@@ -12,20 +12,23 @@ import WaitingSetup from "./WaitingSetup";
 import WaitingStart from "./WaitingStart";
 
 interface RealtimeContainerProps {
+  roomId: string;
   playerId: string;
   isHost: boolean;
-  room: Room;
-  players: Player[];
+  initialRoom: Room;
+  initialPlayers: Player[];
 }
 
 export default function RealtimeContainer({
+  roomId,
   playerId,
   isHost,
-  room,
-  players,
+  initialRoom,
+  initialPlayers,
 }: Readonly<RealtimeContainerProps>) {
-  const [realtimeRoom, setRealtimeRoom] = useState<Room>(room);
-  const [realtimePlayers, setRealtimePlayers] = useState<Player[]>(players);
+  const [realtimeRoom, setRealtimeRoom] = useState<Room>(initialRoom);
+  const [realtimePlayers, setRealtimePlayers] =
+    useState<Player[]>(initialPlayers);
 
   function handlePlayersUpdate(payload: any) {
     setRealtimePlayers((prevPlayers) => {
@@ -43,14 +46,14 @@ export default function RealtimeContainer({
 
   useEffect(() => {
     const channel = supabase
-      .channel(`room:${room.id}`)
+      .channel(`room:${roomId}`)
       .on(
         "postgres_changes",
         {
           event: "UPDATE",
           schema: "public",
           table: "rooms",
-          filter: `id=eq.${room.id}`,
+          filter: `id=eq.${roomId}`,
         },
         (payload) => setRealtimeRoom(payload.new as Room)
       )
@@ -63,14 +66,14 @@ export default function RealtimeContainer({
 
   useEffect(() => {
     const channel = supabase
-      .channel(`player:${room.id}`)
+      .channel(`player:${roomId}`)
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
           table: "players",
-          filter: `room_id=eq.${room.id}`,
+          filter: `room_id=eq.${roomId}`,
         },
         (payload) =>
           setRealtimePlayers((prevPlayers) => [
@@ -84,7 +87,7 @@ export default function RealtimeContainer({
           event: "UPDATE",
           schema: "public",
           table: "players",
-          filter: `room_id=eq.${room.id}`,
+          filter: `room_id=eq.${roomId}`,
         },
         (payload) => handlePlayersUpdate(payload)
       )
@@ -94,7 +97,7 @@ export default function RealtimeContainer({
           event: "DELETE",
           schema: "public",
           table: "players",
-          filter: `room_id=eq.${room.id}`,
+          filter: `room_id=eq.${roomId}`,
         },
         (payload) => handlePlayerDelete(payload)
       )
@@ -104,7 +107,7 @@ export default function RealtimeContainer({
     if (
       realtimePlayers.find((player) => player.id === playerId) === undefined
     ) {
-      redirect(`/join/${realtimeRoom.id}`);
+      redirect(`/join/${roomId}`);
     }
 
     return () => {
@@ -112,12 +115,24 @@ export default function RealtimeContainer({
     };
   }, [supabase, realtimePlayers, setRealtimePlayers]);
 
+  useEffect(() => {
+    supabase
+      .from("players")
+      .select()
+      .eq("room_id", roomId)
+      .then(({ data }) => {
+        if (data) {
+          setRealtimePlayers(data);
+        }
+      });
+  }, [realtimeRoom.status]);
+
   return (
     <>
       {realtimeRoom.status === RoomStatus.WAITING && (
         <WaitingSetup
           isHost={isHost}
-          roomId={realtimeRoom.id}
+          roomId={roomId}
           playerId={playerId}
           room={realtimeRoom}
           players={realtimePlayers}
@@ -126,17 +141,18 @@ export default function RealtimeContainer({
       {realtimeRoom.status === RoomStatus.READY && (
         <WaitingStart
           isHost={isHost}
-          roomId={realtimeRoom.id}
+          roomId={roomId}
           players={realtimePlayers}
         />
       )}
       {realtimeRoom.status === RoomStatus.DISCUSSING && (
         <Discussing
           isHost={isHost}
-          roomId={realtimeRoom.id}
+          roomId={roomId}
           room={realtimeRoom}
           topic={
-            players.find((player) => player.id === playerId)!.is_wolf === true
+            realtimePlayers.find((player) => player.id === playerId)!
+              .is_wolf === true
               ? realtimeRoom.wolf_word ?? ""
               : realtimeRoom.majority_word ?? ""
           }
@@ -145,21 +161,22 @@ export default function RealtimeContainer({
       {realtimeRoom.status === RoomStatus.VOTING && (
         <Voting
           isHost={isHost}
-          roomId={realtimeRoom.id}
+          roomId={roomId}
           playerId={playerId}
           players={realtimePlayers}
           topic={
-            players.find((player) => player.id === playerId)!.is_wolf === true
+            realtimePlayers.find((player) => player.id === playerId)!
+              .is_wolf === true
               ? realtimeRoom.wolf_word ?? ""
               : realtimeRoom.majority_word ?? ""
           }
         />
       )}
       {realtimeRoom.status === RoomStatus.READY_TO_OVERTIME && (
-        <ReadyToOvertime isHost={isHost} roomId={realtimeRoom.id} />
+        <ReadyToOvertime isHost={isHost} roomId={roomId} />
       )}
       {realtimeRoom.status === RoomStatus.GAME_OVER && (
-        <Result isHost={isHost} roomId={realtimeRoom.id} room={realtimeRoom} />
+        <Result isHost={isHost} roomId={roomId} room={realtimeRoom} />
       )}
     </>
   );
