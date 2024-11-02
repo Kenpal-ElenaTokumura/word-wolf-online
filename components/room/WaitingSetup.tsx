@@ -5,6 +5,7 @@ import { Player, Room } from "@/utils/supabase";
 import { Box, Chip, Stack, Typography } from "@mui/material";
 import GameSetupForm from "../form/GameSetupForm";
 import DisplayRoomUrl from "../DisplayRoomUrl";
+import { useState } from "react";
 
 interface WaitingSetupProps {
   isHost: boolean;
@@ -14,12 +15,6 @@ interface WaitingSetupProps {
   players: Player[];
 }
 
-function deletePlayer(playerId: string) {
-  fetch(new URL(`/api/player/${playerId}`, ROOT_URL), {
-    method: "DELETE",
-  });
-}
-
 export default function WaitingSetup({
   isHost,
   roomId,
@@ -27,6 +22,16 @@ export default function WaitingSetup({
   playerId,
   players,
 }: Readonly<WaitingSetupProps>) {
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  async function deletePlayer(playerId: string) {
+    setIsProcessing(true);
+    await fetch(new URL(`/api/player/${playerId}`, ROOT_URL), {
+      method: "DELETE",
+    });
+    setIsProcessing(false);
+  }
+
   return (
     <Stack
       justifySelf={"center"}
@@ -61,6 +66,7 @@ export default function WaitingSetup({
                         onDelete={() => {
                           deletePlayer(player.id);
                         }}
+                        disabled={isProcessing}
                       />
                     );
                   } else {
