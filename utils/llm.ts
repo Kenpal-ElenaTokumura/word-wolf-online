@@ -42,7 +42,6 @@ export default async function callModel(category: string, roomId: string) {
       `,
     ],
   ]);
-  console.log("prompt", (await prompt.invoke({ category })).toJSON());
 
   const structuredLlm = model.withStructuredOutput(topics);
   const chain = prompt.pipe(structuredLlm);

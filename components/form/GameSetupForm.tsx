@@ -53,7 +53,6 @@ export default function GameSetupForm({
       },
       body: JSON.stringify({ category, playTimeMins }),
     });
-    setIsLoading(false);
   }
 
   return (

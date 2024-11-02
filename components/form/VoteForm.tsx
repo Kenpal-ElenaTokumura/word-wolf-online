@@ -1,7 +1,7 @@
 "use client";
 
 import { ROOT_URL } from "@/utils/common";
-import { Player } from "@/utils/supabase";
+import { Player, supabase } from "@/utils/supabase";
 import {
   Button,
   MenuItem,
@@ -45,13 +45,24 @@ export default function VoteForm({
   }
 
   useEffect(() => {
-    const player = players.find((player) => player.id === playerId);
-    if (player?.is_voted) {
-      setIsVoted(true);
-    } else {
-      setIsVoted(false);
+    async function initIsVoted() {
+      const players = await supabase
+        .from("players")
+        .select()
+        .eq("room_id", roomId);
+      if (!players.data || players.error) {
+        return;
+      }
+      const player = players.data.find((player) => player.id === playerId);
+      if (player?.is_voted) {
+        setIsVoted(true);
+      } else {
+        setIsVoted(false);
+      }
     }
-  }, [players, isVoted]);
+
+    initIsVoted();
+  }, []);
 
   return (
     <form onSubmit={votePost}>

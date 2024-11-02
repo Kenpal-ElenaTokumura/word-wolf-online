@@ -19,7 +19,7 @@ export default function Result({
   const [maxVotedPlayer, setMaxVotedPlayer] = useState<Player | null>(null);
 
   useEffect(() => {
-    async function fetchPlayers() {
+    async function setMaxVoted() {
       const players = await supabase
         .from("players")
         .select()
@@ -36,7 +36,7 @@ export default function Result({
       );
     }
 
-    fetchPlayers();
+    setMaxVoted();
   }, []);
 
   return (

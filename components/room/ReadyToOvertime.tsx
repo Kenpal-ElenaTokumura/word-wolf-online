@@ -17,7 +17,7 @@ export default function ReadyToOvertime({
   const [maxVotedPlayers, setMaxVotedPlayers] = useState<Player[] | null>(null);
 
   useEffect(() => {
-    async function fetchPlayers() {
+    async function setMaxVoted() {
       const players = await supabase
         .from("players")
         .select()
@@ -33,7 +33,7 @@ export default function ReadyToOvertime({
       );
     }
 
-    fetchPlayers();
+    setMaxVoted();
   }, []);
 
   return (
