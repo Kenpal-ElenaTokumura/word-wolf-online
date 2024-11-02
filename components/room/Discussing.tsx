@@ -1,9 +1,9 @@
 "use client";
 
+import { Room } from "@/utils/supabase";
 import { Stack, Typography } from "@mui/material";
 import VoteStartButton from "../button/VoteStartButton";
 import CountDownTimer from "../CountDownTimer";
-import { Room } from "@/utils/supabase";
 
 interface DiscussingProps {
   isHost: boolean;

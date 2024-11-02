@@ -1,7 +1,7 @@
 "use client";
 
 import { Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface CountDownTimerProps {
   seconds: number;
@@ -10,9 +10,23 @@ interface CountDownTimerProps {
 export default function CountDownTimer({
   seconds,
 }: Readonly<CountDownTimerProps>) {
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [countTime, setCountTime] = useState<number>(seconds);
 
+  function playAlarm() {
+    if (audioRef.current) {
+      audioRef.current.play();
+    } else {
+      console.error("Audio element not found");
+    }
+  }
+
   useEffect(() => {
+    if (countTime <= 0) {
+      playAlarm();
+      return;
+    }
+
     const timer = setInterval(() => {
       setCountTime((prevCount) => prevCount - 1);
     }, 1000);
@@ -34,6 +48,9 @@ export default function CountDownTimer({
           投票に移ります
         </Typography>
       )}
+      <audio ref={audioRef} src="/alarm.mp3">
+        <track kind="captions" label="Time up sound" />
+      </audio>
     </>
   );
 }
