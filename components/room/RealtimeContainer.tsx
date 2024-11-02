@@ -97,7 +97,6 @@ export default function RealtimeContainer({
           event: "DELETE",
           schema: "public",
           table: "players",
-          filter: `room_id=eq.${roomId}`,
         },
         (payload) => handlePlayerDelete(payload)
       )
