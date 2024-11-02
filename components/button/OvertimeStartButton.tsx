@@ -1,14 +1,9 @@
 "use client";
 
-import { Button } from "@mui/material";
-import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import { ROOT_URL } from "@/utils/common";
-
-function overtimeStart(roomId: string) {
-  fetch(new URL(`/api/room/${roomId}/overtime`, ROOT_URL), {
-    method: "PATCH",
-  });
-}
+import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
+import { Button } from "@mui/material";
+import { useState } from "react";
 
 interface OvertimeStartButtonProps {
   roomId: string;
@@ -19,13 +14,22 @@ export default function OvertimeStartButton({
   roomId,
   disabled = false,
 }: Readonly<OvertimeStartButtonProps>) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  async function overtimeStart(roomId: string) {
+    setIsLoading(true);
+    await fetch(new URL(`/api/room/${roomId}/overtime`, ROOT_URL), {
+      method: "PATCH",
+    });
+  }
+
   return (
     <Button
       variant="contained"
       sx={{ backgroundColor: "#818FB4", color: "#ededed", width: "180px" }}
       endIcon={<KeyboardReturnIcon />}
       onClick={() => overtimeStart(roomId)}
-      disabled={disabled}
+      disabled={disabled || isLoading}
     >
       延長戦を開始
     </Button>

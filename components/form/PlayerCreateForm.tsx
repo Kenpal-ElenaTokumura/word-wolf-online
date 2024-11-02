@@ -32,14 +32,15 @@ export default function PlayerCreateForm({
   createPlayer,
 }: Readonly<PlayerCreateFormProps>) {
   const [playerName, setPlayerName] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubmit = async (event: FormEvent) => {
+    setIsProcessing(true);
     event.preventDefault();
     if (!playerName) {
       return;
     }
     await createPlayer(playerName, roomId);
-    setPlayerName("");
     redirect(`/${roomId}`);
   };
 
@@ -75,6 +76,7 @@ export default function PlayerCreateForm({
               type="text"
               value={playerName}
               onChange={(event) => setPlayerName(event.target.value)}
+              disabled={isProcessing}
             />
           </Grid>
           <Grid alignSelf={"center"}>
@@ -82,6 +84,7 @@ export default function PlayerCreateForm({
               aria-label="Create Player"
               color="primary"
               type="submit"
+              disabled={isProcessing}
             >
               <SendIcon />
             </IconButton>

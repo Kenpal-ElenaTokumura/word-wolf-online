@@ -25,8 +25,10 @@ export default function VoteForm({
 }: Readonly<VoteFormProps>) {
   const [voteTargetId, setVoteTargetId] = useState<string>("");
   const [isVoted, setIsVoted] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   async function votePost(event: React.FormEvent<HTMLFormElement>) {
+    setIsProcessing(true);
     event.preventDefault();
     await fetch(new URL(`/api/player/${playerId}/vote`, ROOT_URL), {
       method: "PATCH",
@@ -39,6 +41,7 @@ export default function VoteForm({
       }),
     });
     setIsVoted(true);
+    setIsProcessing(false);
   }
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function VoteForm({
             setVoteTargetId(event.target.value);
           }}
           required
-          disabled={isVoted}
+          disabled={isVoted || isProcessing}
         >
           {players.map((player) => (
             <MenuItem key={player.id} value={player.id}>
@@ -74,7 +77,7 @@ export default function VoteForm({
           type="submit"
           variant="contained"
           sx={{ backgroundColor: "#818FB4", color: "#ededed" }}
-          disabled={isVoted}
+          disabled={isVoted || isProcessing}
         >
           投票
         </Button>
